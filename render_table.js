@@ -1,4 +1,4 @@
-export function createElement(tag, options = {}) {
+/*export function createElement(tag, options = {}) {
   const { classNames = [], children = [], textContent = null } = options;
   const element = document.createElement(tag);
 
@@ -48,11 +48,9 @@ export function renderTable(rootElement, columns, data) {
 
   rootElement.append(table);
 }
-
-
-
+*/
 //one with sort
-/* export function createElement(tag, options = {}) {
+ export function createElement(tag, options = {}) {
   const {
     classNames = [],
     children = [],
@@ -78,18 +76,18 @@ export function renderTable(rootElement, columns, data) {
 export function renderTable(rootElement, columns, data) {
   let sortedData = [...data];
   let currentSortColumn = null;
-  let isAscending = true;
+  let isIncreasing = true;
 
   const sortData = (columnIndex) => {
     const column = columns[columnIndex];
     
     if (currentSortColumn === columnIndex) {
-      isAscending = !isAscending;
+      isIncreasing = !isIncreasing;
     } else {
       currentSortColumn = columnIndex;
-      isAscending = true;
+      isIncreasing = true;
     }
-
+    
     sortedData.sort((a, b) => {
       const valueA = column.selector(a);
       const valueB = column.selector(b);
@@ -104,10 +102,10 @@ export function renderTable(rootElement, columns, data) {
       const numB = parseFloat(valueB);
       
       if (!isNaN(numA) && !isNaN(numB)) {
-        return isAscending ? numA - numB : numB - numA;
+        return isIncreasing ? numA - numB : numB - numA;
       }
       
-      return isAscending 
+      return isIncreasing 
         ? String(valueA).localeCompare(String(valueB))
         : String(valueB).localeCompare(String(valueA));
     });
@@ -149,4 +147,4 @@ export function renderTable(rootElement, columns, data) {
 
   renderTableContent();
 }
-*/
+

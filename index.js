@@ -2,7 +2,7 @@ import { generateOrders, COFFEE_BY_ID } from "./generation.js";
 import { groupBy, isValidRecord, sum } from "./helper_funcs.js";
 import { renderTable } from "./render_table.js";
 
-const RECORDS_N = 1000;
+const RECORDS_N=1000; 
 const records = generateOrders(RECORDS_N);
 
 console.table(records.slice(0, 10));
@@ -43,7 +43,7 @@ function prepareRows(rows) {
   return groupedByBaristaNCoffee;
 }
 
-const pre = document.querySelector("#data");
+//const pre = document.querySelector("#data");
 
 const groupedRows = prepareRows(records);
 
@@ -78,7 +78,9 @@ const tableColumns = [
   },
 ];
 
-renderTable(root, tableColumns, groupedRows);
+document.getElementById("renderTableButton").onclick = function () {
+  renderTable(root, tableColumns, groupedRows);
+};
 
 // Optional chaining operator https://learn.javascript.ru/optional-chaining
 
