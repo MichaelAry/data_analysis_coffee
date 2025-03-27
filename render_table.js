@@ -50,7 +50,7 @@ export function createElement(tag, options = {}) {
  * @param {Array} data - The data to display in the table
  * @param {number} pageSize - Number of rows per page (default: 10)
  */
-export function renderTable(rootElement, columns, data, pageSize = 10) {
+export function renderTable(rootElement, columns, data, pageSize = 23) {
   // Make a copy of the data so we don't modify the original
   let sortedData = [];
   for (let i = 0; i < data.length; i++) {

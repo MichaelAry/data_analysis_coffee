@@ -6,14 +6,6 @@ export function isValidRecord(record) {
   }
 }
 
-/**
- * Groups an array of objects by a specific property
- *
- * @param {Array} rows - Array of objects to group
- * @param {Function} keySelector - Function that returns the key to group by
- * @returns {Object} - An object where keys are group names and values are arrays of matching items
- */
-
 export function groupBy(rows, keyTaker) {
   let groups = {};
   rows.forEach((_, i) => {
@@ -25,28 +17,6 @@ export function groupBy(rows, keyTaker) {
     groups[key].push(row);
   });
   return groups;
-}
-
-/**
- * Calculates the sum of values in an array
- *
- * @param {Array} items - Array of objects to sum values from
- * @param {Function} valueSelector - Function that returns the value to sum for each item
- * @returns {number} - The total sum
- */
-export function sum(items, valueSelector) {
-  // Start with a total of 0
-  let total = 0;
-
-  // Go through each item and add its value to the total
-  for (let i = 0; i < items.length; i++) {
-    let item = items[i];
-    let value = valueSelector(item);
-    total = total + value;
-  }
-
-  // Return the final total
-  return total;
 }
 
 /**
