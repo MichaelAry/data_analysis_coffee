@@ -46,7 +46,7 @@ export function createElement(tag, options = {}) {
  * Renders a sortable, paginated table
  *
  * @param {HTMLElement} rootElement - The element to append the table to
- * @param {Array} columns - Column definitions with header text and data selector functions
+ * @param {Array} columns - Column definitions with header text and data columnElement functions
  * @param {Array} data - The data to display in the table
  * @param {number} pageSize - Number of rows per page (default: 10)
  */
@@ -81,9 +81,9 @@ export function renderTable(rootElement, columns, data, pageSize = 10) {
 
     // Sort the data array
     sortedData.sort(function (a, b) {
-      // Get the values to compare using the column's selector function
-      const valueA = column.selector(a);
-      const valueB = column.selector(b);
+      // Get the values to compare using the column's columnElement function
+      const valueA = column.columnElement(a);
+      const valueB = column.columnElement(b);
 
       // Handle special case where values are "-" (missing data)
       if (valueA === "-" && valueB === "-") return 0;
@@ -154,8 +154,8 @@ export function renderTable(rootElement, columns, data, pageSize = 10) {
       // Create cells for this row
       let cells = [];
       for (let j = 0; j < columns.length; j++) {
-        // Get the value for this cell using the column's selector function
-        const cellValue = columns[j].selector(rowData);
+        // Get the value for this cell using the column's columnElement function
+        const cellValue = columns[j].columnElement(rowData);
 
         // Create a table cell with this value
         const cell = createElement("td", {

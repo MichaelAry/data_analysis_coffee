@@ -6,15 +6,9 @@ const NUMBER_OF_RECORDS = 8765;
 const records = generateOrders(NUMBER_OF_RECORDS);
 
 document.getElementById("renderTableButton").onclick = function () {
-  renderTable(root, tableColumns, groupedRows);
+  renderTable(document.body, tableColumns, groupedRows);
 };
 
-/**
- * Processes raw coffee order data into a format suitable for display
- *
- * @param {Array} rows - Raw coffee order records
- * @returns {Array} - Processed data grouped by barista with sales calculations
- */
 function transformRowsIntoStructed(rows) {
   const checkedRows = [];
   rows.forEach((_, i) => {
@@ -38,7 +32,6 @@ function transformRowsIntoStructed(rows) {
       return row.coffeeId;
     });
 
-
     const sellsOfBarista = [];
     const coffeeIds = Object.keys(groupedByCoffeeType);
 
@@ -46,32 +39,28 @@ function transformRowsIntoStructed(rows) {
       const coffeeId = coffeeIds[j];
       const coffeeRows = groupedByCoffeeType[coffeeId];
 
-      
       let totalPriceForCofee = 0;
-      let cupsOfTypeOfCofee = 0;
+      let cupsOfTypeOfCoffee = 0;
 
       coffeeRows.forEach((_, k) => {
         const row = coffeeRows[k];
         totalPriceForCofee += row.cups * row.price;
-        cupsOfTypeOfCofee += row.cups;
+        cupsOfTypeOfCoffee += row.cups;
       });
 
-      
       sellsOfBarista.push({
         coffeeId: coffeeId,
         coffeeName: COFFEE_BY_ID[coffeeId],
         totalPriceForCofee: totalPriceForCofee,
-        cupsOfTypeOfCofee: cupsOfTypeOfCofee,
+        cupsOfTypeOfCoffee: cupsOfTypeOfCoffee,
       });
     });
 
-  
     let totalPrice = 0;
-    sellsOfBarista.forEach((_,g)=> {
+    sellsOfBarista.forEach((_, g) => {
       totalPrice += sellsOfBarista[g].totalPriceForCofee;
     });
 
-    
     coffeeGroupedByBarista.push({
       baristaId: baristaId,
       sellsOfBarista: sellsOfBarista,
@@ -82,70 +71,54 @@ function transformRowsIntoStructed(rows) {
   return coffeeGroupedByBarista;
 }
 
-// Process the raw data
 const groupedRows = transformRowsIntoStructed(records);
 
-// Get the document body to append our table to
-const root = document.body;
-
-// Define the columns for our table
 const tableColumns = [
-  // First column: Barista ID
   {
-    header: "ID",
-    selector: function (row) {
+    header: "Baristd ID",
+    columnElement: function (row) {
       return row.baristaId;
     },
   },
 ];
 
-// Add columns for each coffee type (cups and price)
 const coffeeIds = Object.keys(COFFEE_BY_ID);
-for (let i = 0; i < coffeeIds.length; i++) {
+coffeeIds.forEach((_, i) => {
   const id = coffeeIds[i];
   const coffeeName = COFFEE_BY_ID[id];
 
-  // Column for number of cups sold
   tableColumns.push({
     header: coffeeName,
-    selector: function (row) {
-      // Find this coffee in the barista's sellsOfBarista array
-      let coffeeSales = null;
+    columnElement: function (row) {
+      let coffeeSales = 0;
       for (let j = 0; j < row.sellsOfBarista.length; j++) {
         if (row.sellsOfBarista[j].coffeeId === id) {
           coffeeSales = row.sellsOfBarista[j];
           break;
         }
       }
-
-      // Return cups sold or "-" if none
-      return coffeeSales ? coffeeSales.cupsOfTypeOfCofee : "-";
+      return coffeeSales ? coffeeSales.cupsOfTypeOfCoffee : "-";
     },
   });
 
-  // Column for revenue from this coffee
   tableColumns.push({
     header: `${coffeeName} price`,
-    selector: function (row) {
-      // Find this coffee in the barista's sellsOfBarista array
-      let coffeeSales = null;
+    columnElement: function (row) {
+      let coffeeSales = 0;
       for (let j = 0; j < row.sellsOfBarista.length; j++) {
         if (row.sellsOfBarista[j].coffeeId === id) {
           coffeeSales = row.sellsOfBarista[j];
           break;
         }
       }
-
-      // Return formatted price or "-" if none
       return coffeeSales ? coffeeSales.totalPriceForCofee.toFixed(2) : "-";
     },
   });
-}
+});
 
-// Add final column for totalPrice revenue
 tableColumns.push({
   header: "Total",
-  selector: function (row) {
+  columnElement: function (row) {
     return row.totalPrice.toFixed(2);
   },
 });
