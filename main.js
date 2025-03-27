@@ -1,100 +1,89 @@
-// Import functions and data from other files
 import { generateOrders, COFFEE_BY_ID } from "./generation.js";
-import { groupBy, isValidRecord, sum } from "./helper_funcs.js";
+import { groupBy, isValidRecord } from "./helper_funcs.js";
 import { renderTable } from "./render_table.js";
 
-// Number of coffee order records to generate
-const RECORDS_N = 1000;
+const NUMBER_OF_RECORDS = 8765;
+const records = generateOrders(NUMBER_OF_RECORDS);
 
-// Generate random coffee orders
-const records = generateOrders(RECORDS_N);
-
-// Show the first 10 records in the console for debugging
-console.table(records.slice(0, 10));
-
-// Show the coffee types in the console
-console.log(COFFEE_BY_ID);
+document.getElementById("renderTableButton").onclick = function () {
+  renderTable(root, tableColumns, groupedRows);
+};
 
 /**
  * Processes raw coffee order data into a format suitable for display
- * 
+ *
  * @param {Array} rows - Raw coffee order records
  * @returns {Array} - Processed data grouped by barista with sales calculations
  */
-function prepareRows(rows) {
-  // Step 1: Filter out invalid records (missing barista ID or coffee ID)
-  const validatedRows = [];
-  for (let i = 0; i < rows.length; i++) {
+function transformRowsIntoStructed(rows) {
+  const checkedRows = [];
+  rows.forEach((_, i) => {
     if (isValidRecord(rows[i])) {
-      validatedRows.push(rows[i]);
+      checkedRows.push(rows[i]);
     }
-  }
-  
-  // Step 2: Group orders by barista ID
-  const groupedRows = groupBy(validatedRows, function(row) {
+  });
+
+  const groupedRows = groupBy(checkedRows, function (row) {
     return row.baristaId;
   });
-  
-  // Step 3: Process each barista's data
-  const groupedByBaristaNCoffee = [];
-  
-  // Loop through each barista's data
+
+  const coffeeGroupedByBarista = [];
+
   const baristaIds = Object.keys(groupedRows);
-  for (let i = 0; i < baristaIds.length; i++) {
+  baristaIds.forEach((_, i) => {
     const baristaId = baristaIds[i];
     const baristaRows = groupedRows[baristaId];
-    
-    // Group this barista's orders by coffee type
-    const grouped = groupBy(baristaRows, function(row) {
+
+    const groupedByCoffeeType = groupBy(baristaRows, function (row) {
       return row.coffeeId;
     });
-    
-    // Process each coffee type for this barista
-    const sells = [];
-    const coffeeIds = Object.keys(grouped);
-    
-    for (let j = 0; j < coffeeIds.length; j++) {
+
+
+    const sellsOfBarista = [];
+    const coffeeIds = Object.keys(groupedByCoffeeType);
+
+    coffeeIds.forEach((_, j) => {
       const coffeeId = coffeeIds[j];
-      const coffeeRows = grouped[coffeeId];
+      const coffeeRows = groupedByCoffeeType[coffeeId];
+
       
-      // Calculate total cups and revenue for this coffee type
-      let subTotal = 0;
-      let totalCups = 0;
-      
-      for (let k = 0; k < coffeeRows.length; k++) {
+      let totalPriceForCofee = 0;
+      let cupsOfTypeOfCofee = 0;
+
+      coffeeRows.forEach((_, k) => {
         const row = coffeeRows[k];
-        subTotal += row.cups * row.price;
-        totalCups += row.cups;
-      }
+        totalPriceForCofee += row.cups * row.price;
+        cupsOfTypeOfCofee += row.cups;
+      });
+
       
-      // Add this coffee's data to the sells array
-      sells.push({
+      sellsOfBarista.push({
         coffeeId: coffeeId,
         coffeeName: COFFEE_BY_ID[coffeeId],
-        subTotal: subTotal,
-        totalCups: totalCups
+        totalPriceForCofee: totalPriceForCofee,
+        cupsOfTypeOfCofee: cupsOfTypeOfCofee,
       });
-    }
-    
-    // Calculate total revenue for this barista
-    let total = 0;
-    for (let j = 0; j < sells.length; j++) {
-      total += sells[j].subTotal;
-    }
-    
-    // Add this barista's data to the result
-    groupedByBaristaNCoffee.push({
-      baristaId: baristaId,
-      sells: sells,
-      total: total
     });
-  }
+
   
-  return groupedByBaristaNCoffee;
+    let totalPrice = 0;
+    sellsOfBarista.forEach((_,g)=> {
+      totalPrice += sellsOfBarista[g].totalPriceForCofee;
+    });
+
+    
+    coffeeGroupedByBarista.push({
+      baristaId: baristaId,
+      sellsOfBarista: sellsOfBarista,
+      totalPrice: totalPrice,
+    });
+  });
+
+  return coffeeGroupedByBarista;
 }
 
 // Process the raw data
-const groupedRows = prepareRows(records);
+const groupedRows = transformRowsIntoStructed(records);
 
 // Get the document body to append our table to
 const root = document.body;
@@ -104,10 +93,10 @@ const tableColumns = [
   // First column: Barista ID
   {
     header: "ID",
-    selector: function(row) {
+    selector: function (row) {
       return row.baristaId;
-    }
-  }
+    },
+  },
 ];
 
 // Add columns for each coffee type (cups and price)
@@ -115,53 +104,48 @@ const coffeeIds = Object.keys(COFFEE_BY_ID);
 for (let i = 0; i < coffeeIds.length; i++) {
   const id = coffeeIds[i];
   const coffeeName = COFFEE_BY_ID[id];
-  
+
   // Column for number of cups sold
   tableColumns.push({
     header: coffeeName,
-    selector: function(row) {
-      // Find this coffee in the barista's sells array
+    selector: function (row) {
+      // Find this coffee in the barista's sellsOfBarista array
       let coffeeSales = null;
-      for (let j = 0; j < row.sells.length; j++) {
-        if (row.sells[j].coffeeId === id) {
-          coffeeSales = row.sells[j];
+      for (let j = 0; j < row.sellsOfBarista.length; j++) {
+        if (row.sellsOfBarista[j].coffeeId === id) {
+          coffeeSales = row.sellsOfBarista[j];
           break;
         }
       }
-      
+
       // Return cups sold or "-" if none
-      return coffeeSales ? coffeeSales.totalCups : "-";
-    }
+      return coffeeSales ? coffeeSales.cupsOfTypeOfCofee : "-";
+    },
   });
-  
+
   // Column for revenue from this coffee
   tableColumns.push({
     header: `${coffeeName} price`,
-    selector: function(row) {
-      // Find this coffee in the barista's sells array
+    selector: function (row) {
+      // Find this coffee in the barista's sellsOfBarista array
       let coffeeSales = null;
-      for (let j = 0; j < row.sells.length; j++) {
-        if (row.sells[j].coffeeId === id) {
-          coffeeSales = row.sells[j];
+      for (let j = 0; j < row.sellsOfBarista.length; j++) {
+        if (row.sellsOfBarista[j].coffeeId === id) {
+          coffeeSales = row.sellsOfBarista[j];
           break;
         }
       }
-      
+
       // Return formatted price or "-" if none
-      return coffeeSales ? coffeeSales.subTotal.toFixed(2) : "-";
-    }
+      return coffeeSales ? coffeeSales.totalPriceForCofee.toFixed(2) : "-";
+    },
   });
 }
 
-// Add final column for total revenue
+// Add final column for totalPrice revenue
 tableColumns.push({
   header: "Total",
-  selector: function(row) {
-    return row.total.toFixed(2);
-  }
+  selector: function (row) {
+    return row.totalPrice.toFixed(2);
+  },
 });
-
-// Set up the button to render the table when clicked
-document.getElementById("renderTableButton").onclick = function() {
-  renderTable(root, tableColumns, groupedRows);
-};
