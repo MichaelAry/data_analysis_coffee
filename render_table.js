@@ -1,55 +1,5 @@
-/*export function createElement(tag, options = {}) {
-  const { classNames = [], children = [], textContent = null } = options;
-  const element = document.createElement(tag);
+import { paginate } from "./helper_funcs.js";
 
-  // Can be replaced to .forEach
-  for (const className of classNames) {
-    element.classList.add(className);
-  }
-
-  // Can be replaced to .forEach
-  for (const child of children) {
-    element.append(child);
-  }
-
-  if (textContent) {
-    element.textContent = textContent;
-  }
-
-  return element;
-}
-
-// Columns:
-// {
-//    header: "Column name",
-//    selector: (r) => r.name
-// }
-
-export function renderTable(rootElement, columns, data) {
-  const header = createElement("thead", {
-    children: columns
-      .map((v) => v.header)
-      .map((v) => createElement("th", { textContent: v })),
-  });
-
-  const rows = data.map((row) =>
-    columns
-      .map((v) => v.selector(row))
-      .map((v) => createElement("td", { textContent: v }))
-  );
-
-  const table = createElement("table", {
-    children: [
-      header,
-      ...rows.map((cells) => createElement("tr", { children: cells })),
-    ],
-    classNames: ["table__wrapper"],
-  });
-
-  rootElement.append(table);
-}
-*/
-//one with sort
 export function createElement(tag, options = {}) {
   const {
     classNames = [],
@@ -73,10 +23,11 @@ export function createElement(tag, options = {}) {
   return element;
 }
 
-export function renderTable(rootElement, columns, data) {
+export function renderTable(rootElement, columns, data, pageSize = 10) {
   let sortedData = [...data];
   let currentSortColumn = null;
   let isIncreasing = true;
+  let currentPage = 1;
 
   const sortData = (columnIndex) => {
     const column = columns[columnIndex];
@@ -124,7 +75,8 @@ export function renderTable(rootElement, columns, data) {
       ),
     });
 
-    const rows = sortedData.map((row) =>
+    const paginatedData = paginate(sortedData, pageSize, currentPage);
+    const rows = paginatedData.map((row) =>
       columns
         .map((v) => v.selector(row))
         .map((v) => createElement("td", { textContent: v }))
@@ -138,7 +90,41 @@ export function renderTable(rootElement, columns, data) {
       classNames: ["table__wrapper"],
     });
 
-    rootElement.append(table);
+    const paginationControls = createPaginationControls();
+    rootElement.append(table, paginationControls);
+  };
+
+  const createPaginationControls = () => {
+    const totalPages = Math.ceil(sortedData.length / pageSize);
+
+    const pagination = createElement("div", {
+      classNames: ["pagination"],
+      children: [
+        createElement("button", {
+          textContent: "Previous",
+          onClick: () => {
+            if (currentPage > 1) {
+              currentPage--;
+              renderTableContent();
+            }
+          },
+        }),
+        createElement("span", {
+          textContent: `Page ${currentPage} of ${totalPages}`,
+        }),
+        createElement("button", {
+          textContent: "Next",
+          onClick: () => {
+            if (currentPage < totalPages) {
+              currentPage++;
+              renderTableContent();
+            }
+          },
+        }),
+      ],
+    });
+
+    return pagination;
   };
 
   renderTableContent();

@@ -13,7 +13,6 @@ function prepareRows(rows) {
 
   const groupedRows = groupBy(validatedRows, (row) => row.baristaId);
 
-  // Object.entries - для объекта key:value [[key, value]]
   const groupedByBaristaNCoffee = Object.entries(groupedRows).map(
     ([baristaId, rows]) => {
       const grouped = groupBy(rows, (row) => row.coffeeId);
@@ -43,18 +42,9 @@ function prepareRows(rows) {
   return groupedByBaristaNCoffee;
 }
 
-//const pre = document.querySelector("#data");
-
 const groupedRows = prepareRows(records);
 
-// pre.innerText = JSON.stringify(groupedRows, null, 2);
-
 const root = document.body;
-
-// Object { key1: value1, key2: value2 }
-// Object.entries(object) => [[key1, value1], [key2, value2]]
-// map => [{ header: "Latte"}, { header: "Cappuccino" }]
-// ...[{ header: "Latte"}, { header: "Cappuccino" }]
 
 const tableColumns = [
   {
@@ -81,11 +71,3 @@ const tableColumns = [
 document.getElementById("renderTableButton").onclick = function () {
   renderTable(root, tableColumns, groupedRows);
 };
-
-// Optional chaining operator https://learn.javascript.ru/optional-chaining
-
-// let value = { id: 1 } (maybe null)
-// value?.id - value or undefined
-// r.sells.find((c) => c.coffeeId === id)?.subTotal.toFixed(2)
-
-// ?? https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Nullish_coalescing
