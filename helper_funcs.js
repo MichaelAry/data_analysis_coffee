@@ -1,4 +1,4 @@
-export function isValidRecord(record) {
+/*export function isValidRecord(record) {
   return !!record.baristaId && !!record.coffeeId;
 }
 
@@ -52,3 +52,34 @@ export function sum(items, by) {
 // ]
 //
 // sum(rows, (row) => row.cups) -> 11
+*/
+// Check if a record is valid by ensuring it has both baristaId and coffeeId
+export function isValidRecord(record) {
+  return Boolean(record.baristaId && record.coffeeId);
+}
+
+// Group an array of objects by a specified key
+export function groupBy(rows, keySelector) {
+  return rows.reduce((groups, row) => {
+    const key = keySelector(row);
+    if (!groups[key]) {
+      groups[key] = [];
+    }
+    groups[key].push(row);
+    return groups;
+  }, {});
+}
+
+// Sum the values of a specified field in an array of objects
+export function sum(items, valueSelector) {
+  return items.reduce((total, item) => total + valueSelector(item), 0);
+}
+
+// Example usage:
+// const items = [{ id: 1, count: 1 }, { id: 2, count: 5 }, { id: 1, count: 2 }];
+// const groupedItems = groupBy(items, item => item.id);
+// console.log(groupedItems);
+// => { 1: [{ id: 1, count: 1 }, { id: 1, count: 2 }], 2: [{ id: 2, count: 5 }] }
+// const totalCups = sum(items, item => item.count);
+// console.log(totalCups);
+// => 8

@@ -50,7 +50,7 @@ export function renderTable(rootElement, columns, data) {
 }
 */
 //one with sort
- export function createElement(tag, options = {}) {
+export function createElement(tag, options = {}) {
   const {
     classNames = [],
     children = [],
@@ -59,15 +59,15 @@ export function renderTable(rootElement, columns, data) {
   } = options;
   const element = document.createElement(tag);
 
-  classNames.forEach(className => element.classList.add(className));
-  children.forEach(child => element.append(child));
+  classNames.forEach((className) => element.classList.add(className));
+  children.forEach((child) => element.append(child));
 
   if (textContent !== null) {
     element.textContent = textContent;
   }
 
   if (onClick) {
-    element.addEventListener('click', onClick);
+    element.addEventListener("click", onClick);
   }
 
   return element;
@@ -80,32 +80,30 @@ export function renderTable(rootElement, columns, data) {
 
   const sortData = (columnIndex) => {
     const column = columns[columnIndex];
-    
+
     if (currentSortColumn === columnIndex) {
       isIncreasing = !isIncreasing;
     } else {
       currentSortColumn = columnIndex;
       isIncreasing = true;
     }
-    
+
     sortedData.sort((a, b) => {
       const valueA = column.selector(a);
       const valueB = column.selector(b);
-      
-      // Handle string "-" cases
+
       if (valueA === "-" && valueB === "-") return 0;
       if (valueA === "-") return 1;
       if (valueB === "-") return -1;
 
-      // Convert to numbers if possible
       const numA = parseFloat(valueA);
       const numB = parseFloat(valueB);
-      
+
       if (!isNaN(numA) && !isNaN(numB)) {
         return isIncreasing ? numA - numB : numB - numA;
       }
-      
-      return isIncreasing 
+
+      return isIncreasing
         ? String(valueA).localeCompare(String(valueB))
         : String(valueB).localeCompare(String(valueA));
     });
@@ -114,14 +112,14 @@ export function renderTable(rootElement, columns, data) {
   };
 
   const renderTableContent = () => {
-    rootElement.innerHTML = '';
-    
-    const header = createElement('thead', {
-      children: columns.map((v, index) => 
-        createElement('th', { 
+    rootElement.innerHTML = "";
+
+    const header = createElement("thead", {
+      children: columns.map((v, index) =>
+        createElement("th", {
           textContent: v.header,
           onClick: () => sortData(index),
-          classNames: ['sortable']
+          classNames: ["sortable"],
         })
       ),
     });
@@ -129,17 +127,15 @@ export function renderTable(rootElement, columns, data) {
     const rows = sortedData.map((row) =>
       columns
         .map((v) => v.selector(row))
-        .map((v) => createElement('td', { textContent: v }))
+        .map((v) => createElement("td", { textContent: v }))
     );
 
-    const table = createElement('table', {
+    const table = createElement("table", {
       children: [
         header,
-        ...rows.map((cells) =>
-          createElement('tr', { children: cells })
-        ),
+        ...rows.map((cells) => createElement("tr", { children: cells })),
       ],
-      classNames: ['table__wrapper'],
+      classNames: ["table__wrapper"],
     });
 
     rootElement.append(table);
@@ -147,4 +143,3 @@ export function renderTable(rootElement, columns, data) {
 
   renderTableContent();
 }
-
