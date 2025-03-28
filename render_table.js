@@ -3,7 +3,8 @@ import { paginate } from "./helper_funcs.js";
 export function createElement(tag, options = {}) {
   const classNames = options.classNames || [];
   const children = options.children || [];
-  const textContent = options.textContent !== undefined ? options.textContent : 0;
+  const textContent =
+    options.textContent !== undefined ? options.textContent : 0;
   const onClick = options.onClick || 0;
   const onChange = options.onChange || 0;
   const value = options.value;
@@ -25,7 +26,6 @@ export function createElement(tag, options = {}) {
 
   return element;
 }
-
 
 export function renderTable(bodyElement, columns, data, pageSize = 23) {
   let sortedData = [];
@@ -245,57 +245,56 @@ export function renderTable(bodyElement, columns, data, pageSize = 23) {
   function createPaginationControls() {
     const totalPages = Math.ceil(sortedData.length / pageSize);
 
-   
     const pageSizeContainer = createElement("div", {
       classNames: ["page-size-container"],
     });
 
-   
     const pageSizeLabel = createElement("span", {
       textContent: "Rows per page:",
       classNames: ["page-size-label"],
     });
 
-   
     const pageSizeInput = createElement("input", {
       classNames: ["page-size-input"],
       value: pageSize,
-      onChange: function(event) {
+      onChange: function (event) {
         const newSize = parseInt(event.target.value);
         if (newSize > 0) {
           pageSize = newSize;
-          currentPage = 1; 
+          currentPage = 1;
           renderTableContent();
         }
-      }
+      },
     });
     pageSizeInput.type = "number";
     pageSizeInput.min = "1";
     pageSizeInput.max = sortedData.length;
 
-    
     const quickSelectSizes = [10, 20, 50, 100];
     const quickSelectContainer = createElement("div", {
       classNames: ["quick-select-container"],
     });
 
-    quickSelectSizes.forEach(size => {
+    quickSelectSizes.forEach((size) => {
       const quickSelectButton = createElement("button", {
         textContent: size,
         classNames: ["quick-select-button"],
-        onClick: function() {
+        onClick: function () {
           pageSize = size;
           pageSizeInput.value = size;
           currentPage = 1;
           renderTableContent();
-        }
+        },
       });
       quickSelectContainer.appendChild(quickSelectButton);
     });
 
-    pageSizeContainer.append(pageSizeLabel, pageSizeInput, quickSelectContainer);
+    pageSizeContainer.append(
+      pageSizeLabel,
+      pageSizeInput,
+      quickSelectContainer
+    );
 
-    
     const navigationContainer = createElement("div", {
       classNames: ["navigation-container"],
     });
@@ -329,15 +328,13 @@ export function renderTable(bodyElement, columns, data, pageSize = 23) {
 
     navigationContainer.append(prevButton, currentPageCounter, nextButton);
 
-    
     const pagination = createElement("div", {
       classNames: ["pagination"],
       children: [pageSizeContainer, navigationContainer],
     });
 
     return pagination;
-}
-
+  }
 
   renderTableContent();
 }
