@@ -8,8 +8,7 @@ export function isValidRecord(record) {
 
 export function groupBy(rows, keyTaker) {
   let groups = {};
-  rows.forEach((_, i) => {
-    let row = rows[i];
+  rows.forEach((row) => {
     let key = keyTaker(row);
     if (!groups[key]) {
       groups[key] = [];
