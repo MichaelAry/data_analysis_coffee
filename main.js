@@ -10,12 +10,7 @@ document.getElementById("renderTableButton").onclick = function () {
 };
 
 function transformRowsIntoStructed(rows) {
-  const checkedRows = [];
-  rows.forEach((_, i) => {
-    if (isValidRecord(rows[i])) {
-      checkedRows.push(rows[i]);
-    }
-  });
+  const checkedRows = rows.filter(isValidRecord);
 
   const groupedRows = groupBy(checkedRows, function (row) {
     return row.baristaId;
@@ -24,8 +19,7 @@ function transformRowsIntoStructed(rows) {
   const coffeeGroupedByBarista = [];
 
   const baristaIds = Object.keys(groupedRows);
-  baristaIds.forEach((_, i) => {
-    const baristaId = baristaIds[i];
+  baristaIds.forEach((baristaId) => {
     const baristaRows = groupedRows[baristaId];
 
     const groupedByCoffeeType = groupBy(baristaRows, function (row) {
@@ -35,15 +29,13 @@ function transformRowsIntoStructed(rows) {
     const sellsOfBarista = [];
     const coffeeIds = Object.keys(groupedByCoffeeType);
 
-    coffeeIds.forEach((_, j) => {
-      const coffeeId = coffeeIds[j];
+    coffeeIds.forEach((coffeeId) => {
       const coffeeRows = groupedByCoffeeType[coffeeId];
 
       let totalPriceForCofee = 0;
       let cupsOfTypeOfCoffee = 0;
 
-      coffeeRows.forEach((_, k) => {
-        const row = coffeeRows[k];
+      coffeeRows.forEach((row) => {
         totalPriceForCofee += row.cups * row.price;
         cupsOfTypeOfCoffee += row.cups;
       });
