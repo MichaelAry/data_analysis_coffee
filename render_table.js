@@ -284,7 +284,7 @@ export function renderTable(bodyElement, columns, data, pageSize = 23) {
         textContent: size,
         classNames: ["quick-select-button"],
         onClick: function() {
-          pageSize = size-1;
+          pageSize = size;
           pageSizeInput.value = size;
           currentPage = 1;
           renderTableContent();
