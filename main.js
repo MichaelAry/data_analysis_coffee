@@ -1,6 +1,6 @@
 import { generateOrders, COFFEE_BY_ID } from "./generation.js";
-import { groupBy, isValidRecord } from "./helper_funcs.js";
-import { renderTable } from "./table-renderer.js";
+import { groupBy, isValidRecord } from "./helperFuncs.js";
+import { renderTable } from "./tableRenderer.js";
 
 const NUMBER_OF_RECORDS = 1000;
 const records = generateOrders(NUMBER_OF_RECORDS);
