@@ -1,8 +1,8 @@
 import { generateOrders, COFFEE_BY_ID } from "./generation.js";
 import { groupBy, isValidRecord } from "./helper_funcs.js";
-import { renderTable } from "./render_table.js";
+import { renderTable } from "./table-renderer.js";
 
-const NUMBER_OF_RECORDS = 8765;
+const NUMBER_OF_RECORDS = 1000;
 const records = generateOrders(NUMBER_OF_RECORDS);
 
 document.getElementById("renderTableButton").onclick = function () {

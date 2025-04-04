@@ -1,3 +1,7 @@
+body {
+  background-color: #404040;
+  color: rgb(201, 118, 10);
+}
 .page-size-container {
   display: flex;
   align-items: center;
@@ -48,4 +52,11 @@
   border-radius: 4px;
   flex-wrap: wrap;
   gap: 15px;
+}
+
+.column-visible {
+  background-color: #90ad92;
+}
+.column-hidden {
+  background-color: #bb6060;
 }

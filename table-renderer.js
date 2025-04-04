@@ -1,31 +1,6 @@
+import { createElement } from "./dom-utils.js";
+import { createPaginationControls } from "./pagination-controls.js";
 import { paginate } from "./helper_funcs.js";
-
-export function createElement(tag, options = {}) {
-  const classNames = options.classNames || [];
-  const children = options.children || [];
-  const textContent =
-    options.textContent !== undefined ? options.textContent : 0;
-  const onClick = options.onClick || 0;
-  const onChange = options.onChange || 0;
-  const value = options.value;
-
-  const element = document.createElement(tag);
-
-  classNames.forEach((_, i) => {
-    element.classList.add(classNames[i]);
-  });
-
-  children.forEach((_, i) => {
-    element.append(children[i]);
-  });
-
-  if (textContent) element.textContent = textContent;
-  if (onClick) element.addEventListener("click", onClick);
-  if (onChange) element.addEventListener("change", onChange);
-  if (value !== undefined) element.value = value;
-
-  return element;
-}
 
 export function renderTable(bodyElement, columns, data, pageSize = 23) {
   let sortedData = [];
@@ -135,6 +110,17 @@ export function renderTable(bodyElement, columns, data, pageSize = 23) {
     return totals;
   }
 
+  function handlePageChange(newPage) {
+    currentPage = newPage;
+    renderTableContent();
+  }
+
+  function handlePageSizeChange(newSize) {
+    pageSize = newSize;
+    currentPage = 1;
+    renderTableContent();
+  }
+
   function renderTableContent() {
     bodyElement.innerHTML = "";
 
@@ -237,104 +223,16 @@ export function renderTable(bodyElement, columns, data, pageSize = 23) {
       classNames: ["table__wrapper"],
     });
 
-    const paginationControls = createPaginationControls();
+    const paginationControls = createPaginationControls(
+      sortedData,
+      pageSize,
+      currentPage,
+      handlePageChange,
+      handlePageSizeChange
+    );
 
     bodyElement.append(table);
     bodyElement.append(paginationControls);
-  }
-
-  function createPaginationControls() {
-    const totalPages = Math.ceil(sortedData.length / pageSize);
-
-    const pageSizeContainer = createElement("div", {
-      classNames: ["page-size-container"],
-    });
-
-    const pageSizeLabel = createElement("span", {
-      textContent: "Rows per page:",
-      classNames: ["page-size-label"],
-    });
-
-    const pageSizeInput = createElement("input", {
-      classNames: ["page-size-input"],
-      value: pageSize,
-      onChange: function (event) {
-        const newSize = parseInt(event.target.value);
-        if (newSize > 0) {
-          pageSize = newSize;
-          currentPage = 1;
-          renderTableContent();
-        }
-      },
-    });
-    pageSizeInput.type = "number";
-    pageSizeInput.min = "1";
-    pageSizeInput.max = sortedData.length;
-
-    const quickSelectSizes = [10, 20, 50, 100];
-    const quickSelectContainer = createElement("div", {
-      classNames: ["quick-select-container"],
-    });
-
-    quickSelectSizes.forEach((size) => {
-      const quickSelectButton = createElement("button", {
-        textContent: size,
-        classNames: ["quick-select-button"],
-        onClick: function () {
-          pageSize = size;
-          pageSizeInput.value = size;
-          currentPage = 1;
-          renderTableContent();
-        },
-      });
-      quickSelectContainer.appendChild(quickSelectButton);
-    });
-
-    pageSizeContainer.append(
-      pageSizeLabel,
-      pageSizeInput,
-      quickSelectContainer
-    );
-
-    const navigationContainer = createElement("div", {
-      classNames: ["navigation-container"],
-    });
-
-    const prevButton = createElement("button", {
-      textContent: "Previous Page",
-      onClick: function () {
-        if (currentPage > 1) {
-          currentPage--;
-          renderTableContent();
-        }
-      },
-      classNames: ["pagination-button"],
-    });
-
-    const currentPageCounter = createElement("span", {
-      textContent: `Page ${currentPage} of ${totalPages}`,
-      classNames: ["page-counter"],
-    });
-
-    const nextButton = createElement("button", {
-      textContent: "Next Page",
-      onClick: function () {
-        if (currentPage < totalPages) {
-          currentPage++;
-          renderTableContent();
-        }
-      },
-      classNames: ["pagination-button"],
-    });
-
-    navigationContainer.append(prevButton, currentPageCounter, nextButton);
-
-    const pagination = createElement("div", {
-      classNames: ["pagination"],
-      children: [pageSizeContainer, navigationContainer],
-    });
-
-    return pagination;
   }
 
   renderTableContent();
