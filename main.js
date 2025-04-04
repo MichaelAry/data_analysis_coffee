@@ -5,6 +5,29 @@ import { renderTable } from "./tableRenderer.js";
 const NUMBER_OF_RECORDS = 1000;
 const records = generateOrders(NUMBER_OF_RECORDS);
 
+const filterContainer = document.createElement("div");
+const baristaIdInput = document.createElement("input");
+baristaIdInput.placeholder = "baristID contains this num";
+baristaIdInput.type = "text";
+
+const filterButton = document.createElement("button");
+filterButton.textContent = "Filter";
+
+filterContainer.appendChild(baristaIdInput);
+filterContainer.appendChild(filterButton);
+document.body.insertBefore(
+  filterContainer,
+  document.getElementById("renderTableButton")
+);
+
+filterButton.onclick = function () {
+  const filteredRecords = records.filter((record) => {
+    return record.baristaId.toString().includes(baristaIdInput.value);
+  });
+  const groupedRows = transformRowsIntoStructed(filteredRecords);
+  renderTable(document.body, tableColumns, groupedRows);
+};
+
 document.getElementById("renderTableButton").onclick = function () {
   renderTable(document.body, tableColumns, groupedRows);
 };
