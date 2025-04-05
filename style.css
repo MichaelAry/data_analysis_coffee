@@ -1,7 +1,9 @@
 body {
-  background-color: #404040;
-  color: rgb(201, 118, 10);
+  background-color: #121212;
+  color: #ff8c00;
+  font-family: Arial, sans-serif;
 }
+
 .page-size-container {
   display: flex;
   align-items: center;
@@ -12,9 +14,9 @@ body {
   width: 60px;
   padding: 5px;
   border-radius: 4px;
-  border: 1px solid #555;
-  background-color: #2d2d2d;
-  color: white;
+  border: 1px solid #ff8c00;
+  background-color: #1e1e1e;
+  color: #ff8c00;
   text-align: center;
 }
 
@@ -25,15 +27,17 @@ body {
 
 .quick-select-button {
   padding: 5px 10px;
-  border: 1px solid #555;
+  border: 1px solid #ff8c00;
   border-radius: 4px;
-  background-color: #2d2d2d;
-  color: white;
+  background-color: #1e1e1e;
+  color: #ff8c00;
   cursor: pointer;
+  transition: all 0.2s ease;
 }
 
 .quick-select-button:hover {
-  background-color: #404040;
+  background-color: #ff8c00;
+  color: #121212;
 }
 
 .navigation-container {
@@ -48,15 +52,48 @@ body {
   justify-content: space-between;
   align-items: center;
   padding: 15px;
-  background-color: #c4c2c2;
+  background-color: #1e1e1e;
+  border: 1px solid #ff8c00;
   border-radius: 4px;
   flex-wrap: wrap;
   gap: 15px;
 }
 
 .column-visible {
-  background-color: #90ad92;
+  background-color: rgba(255, 140, 0, 0.2);
+  color: #ff8c00;
 }
 .column-hidden {
-  background-color: #bb6060;
+  background-color: rgba(255, 140, 0, 0.1);
+  color: #ff8c00;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+  margin-top: 20px;
+}
+
+th, td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #ff8c00;
+}
+
+th {
+  background-color: #1e1e1e;
+  color: #ff8c00;
+  font-weight: bold;
+}
+
+tr:hover {
+  background-color: rgba(255, 140, 0, 0.1);
+}
+
+.column-visible{
+  background-color: seagreen;
+}
+
+.column-hidden{
+  background-color: rgb(222, 84, 76);
 }
